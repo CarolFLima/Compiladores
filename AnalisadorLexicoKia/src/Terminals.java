@@ -24,8 +24,9 @@ public enum Terminals {
 	DEFINE ("reservedword", "define") ,
 	ARRAY ("reservedword", "cons") ,
 
-	IDENTIFIER ("Identifier", "") ,
-
+	IDENTIFIER ("identifier", "") ,
+	DATA_TYPE ("data_type", "") ,
+	
 	ASSIGN ("operator", "=") ,
 	PLUS ("operator", "+") ,
 	MINUS ("operator", "-") ,
