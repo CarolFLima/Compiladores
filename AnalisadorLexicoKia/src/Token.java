@@ -43,8 +43,16 @@ public class Token {
 	
 	@Override 
 	public String toString(){
-		// TODO
-		return "";
+
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append("[").append(this.getType());
+		builder.append(", ").append(this.getValue());
+		builder.append(", Linha: ").append(this.getRow());
+		builder.append(", Coluna: ").append(this.getColumn());
+		builder.append("]");
+		
+		return builder.toString();
 	}
 	
 	
