@@ -8,6 +8,9 @@ public class Main {
 		LexicalAnalyzer la = new LexicalAnalyzer(file);
 		
 		la.printSource();
+		
+		la.nextToken();
+		
 	}
 
 }
