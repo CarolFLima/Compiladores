@@ -1,7 +1,7 @@
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class LexicalAnalyzer {
@@ -12,13 +12,15 @@ public class LexicalAnalyzer {
 
 	private List<Character> source;	
 
+	private int sourcePointer = 0;
+
 	public LexicalAnalyzer(String file){
 		this.row = this.column = 1;
 		this.source = this.buildSource(file);
 	}
 
 	private List<Character> buildSource(String file) {
-		List<Character> source = new ArrayList<Character>();
+		List<Character> source = new LinkedList<Character>();
 
 		try {
 			InputStream input = new FileInputStream(file);
@@ -74,16 +76,28 @@ public class LexicalAnalyzer {
 	//			
 	//			}
 
+	private Character nextCharacter() {
+
+		return getSource().remove(0);
+	}
+
+	private void insertCharacter(Character character){
+		getSource().add(0, character);
+	}
+
 	public Token nextToken(){
 
 		if(hasNext()){
-			Character character = this.nextCharacter(); //fazer esse método
-
+			Character character = this.nextCharacter(); 
+			System.out.println("passou aqui " );
+			if(character == '\t')
+				System.out.println("Teve barra t");
 			if(character == ' ' || character == '\t' || character == '\n'){
 				//TODO definir \0 depois
 				return this.nextToken();
 			} 
 			
+
 			if(character == '%'){
 				Character nextCharacter = this.nextCharacter();
 				if(nextCharacter == '%' || nextCharacter == '*'){
@@ -91,25 +105,25 @@ public class LexicalAnalyzer {
 				} 
 				return scanOperator(character);
 			}
-			
+
 			if(Character.isLetter(character) || character == '_')
 				return scanWord(character);
 
 			if((int) character == 34 || (int) character == 39 )
 				return scanCharacter(character);
-			
+
 			if(character.isDigit(character) || character == '.')
 				return scanNumber(character);
-			
+
 			if(Terminals.contains("operator", character.toString()))
 				return scanOperator(character);
-			
+
 			if(character == '&' || character == '|')
 				return scanOperator(character);
-			
+
 			if(Terminals.contains("delimiter", character.toString()))
 				return this.buildToken("delimiter", character.toString());
-				
+
 
 			throw new LexicalException("No more tokens.");	
 		}
@@ -117,24 +131,51 @@ public class LexicalAnalyzer {
 	}
 
 
-	private Token buildToken(String string, String string2) {
+	private Token buildToken(String type, String value) {
 		// TODO Auto-generated method stub
+		System.out.println(value);
 		return null;
 	}
 
-	private Token scanNumber(Character character) {
+	private Token scanNumber(Character initial) {
 		// TODO Auto-generated method stub
-		return null;
+		
+		int dotFlag = 0;
+		Terminals type = Terminals.INTEGER;
+		StringBuilder word = new StringBuilder();
+		Character nextCharacter = initial;
+		while(true){
+			word.append(nextCharacter);
+
+			if(!hasNext()){
+				// TODO para no fim de tudo e manda uma lexicalexception pq o ultimo valor n pode ser um numero
+			}
+			
+			if(!Character.isDigit(nextCharacter) && nextCharacter != '.'){
+				this.insertCharacter(nextCharacter);
+				return buildToken(type.toString(), word.toString());
+			}
+			
+			if(nextCharacter == '.' && dotFlag < 1){
+				type = Terminals.FLOAT;
+				dotFlag++;
+			} else if (dotFlag > 1){
+				System.out.println("DEU ERRO"); // TODO lexical exception
+			}
+			nextCharacter = nextCharacter();
+
+		}
 	}
 
 	private Token scanCharacter(Character character) {
 		// TODO Auto-generated method stub
-		return null;
+		return this.nextToken();
 	}
 
 	private Token scanWord(Character character) {
 		// TODO Auto-generated method stub
-		return null;
+		
+		return this.nextToken();
 	}
 
 	private Token scanOperator(Character character) {
@@ -147,10 +188,7 @@ public class LexicalAnalyzer {
 		return null;
 	}
 
-	private Character nextCharacter() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 
 
