@@ -82,8 +82,9 @@ public class LexicalAnalyzer {
 			if(character == '%'){
 				Character nextCharacter = this.nextCharacter();
 				if(nextCharacter == '%' || nextCharacter == '*'){
-					return this.scanComment(character);
+					return this.scanComment(nextCharacter);
 				} 
+				this.insertCharacter(nextCharacter);
 				return this.scanOperator(character);
 			}
 
@@ -130,6 +131,11 @@ public class LexicalAnalyzer {
 		while(true){
 			if(!this.hasNext()){
 				// TODO para no fim de tudo e manda uma lexicalexception pq o ultimo valor n pode ser um numero
+				word.append(nextCharacter);
+				if(Terminals.contains("reservedword", word.toString()))
+					return buildToken("reservedword", word.toString());
+				else 
+					return buildToken("identifier", word.toString());	
 			}
 			
 			if(!Character.isLetterOrDigit(nextCharacter) && nextCharacter != '_'){
@@ -158,6 +164,8 @@ public class LexicalAnalyzer {
 			
 			if(!this.hasNext()){
 				// TODO para no fim de tudo e manda uma lexicalexception pq o ultimo valor n pode ser um numero
+				word.append(nextCharacter);
+				return buildToken("data_type", word.toString());
 			}
 
 			if(!Character.isDigit(nextCharacter) && nextCharacter != '.'){
@@ -182,6 +190,9 @@ public class LexicalAnalyzer {
 		Character nextCharacter = this.nextCharacter();
 		word.append(nextCharacter);
 		
+		if(!this.hasNext())
+			// TODO throw erro lexico
+			
 		if((int) this.nextCharacter() != 39){
 			// TODO throw um erro aqui caso tenha mais de um char entre os apostrofos
 		}
@@ -218,18 +229,11 @@ public class LexicalAnalyzer {
 		if(Terminals.contains("operator", word.toString()))
 			return buildToken("operator", word.toString());
 		else 
-			return buildToken("operator", initial.toString());
-		
+			return buildToken("operator", initial.toString());	
 	}
 
-	private Token scanComment(Character character) {
+	private Token scanComment(Character initial) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
-
-
-
-
 }
