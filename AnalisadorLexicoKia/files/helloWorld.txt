@@ -1,6 +1,4 @@
 
-Hello "OIE eu sou a carol" world
-Teste do char 'C'
-ABC 3127
-	DEi tab 2.55
-	Finalizei
+int 20.4
+"hello"
+'c'

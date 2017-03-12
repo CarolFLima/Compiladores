@@ -64,9 +64,9 @@ public class LexicalAnalyzer {
 	}
 
 	private void insertCharacter(Character character){
-		//System.out.println("Esta printando de novo");
+		System.out.println("Esta printando de novo");
 		getSource().add(0, character);
-		//this.printSource();
+		this.printSource();
 	}
 
 	public Token nextToken(){
@@ -89,30 +89,29 @@ public class LexicalAnalyzer {
 				if(nextCharacter == '%' || nextCharacter == '*'){
 					return this.scanComment(character);
 				} 
-				return scanOperator(character);
+				return this.scanOperator(character);
 			}
 
-			if(Character.isLetter(character) || character == '_')
-				return scanWord(character);
-
 			if((int) character == 34 )
-				return scanCharacterChain();				
+				return this.scanCharacterChain();				
 			
 			if((int) character == 39)
-				return scanChar();
+				return this.scanChar();
 
 			if(character.isDigit(character) || character == '.')
-				return scanNumber(character);
+				return this.scanNumber(character);
 
 			if(Terminals.contains("operator", character.toString()))
-				return scanOperator(character);
+				return this.scanOperator(character);
 
 			if(character == '&' || character == '|')
-				return scanOperator(character);
+				return this.scanOperator(character);
 
 			if(Terminals.contains("delimiter", character.toString()))
 				return this.buildToken("delimiter", character.toString());
-
+			
+			if(Character.isLetter(character) || character == '_')
+				return this.scanWord(character);
 
 			throw new LexicalException("No more tokens.");	
 		}
@@ -135,7 +134,7 @@ public class LexicalAnalyzer {
 		
 		while(true){
 			
-			if(!hasNext()){
+			if(!this.hasNext()){
 				// TODO para no fim de tudo e manda uma lexicalexception pq o ultimo valor n pode ser um numero
 			}
 
@@ -172,7 +171,7 @@ public class LexicalAnalyzer {
 		StringBuilder word = new StringBuilder();
 		Character nextCharacter = this.nextCharacter();
 		while(true){
-			if(!hasNext()){
+			if(!this.hasNext()){
 				// TODO para no fim de tudo e manda uma lexicalexception pq o ultimo valor n pode ser um numero
 			}
 			if((int) nextCharacter == 34){
@@ -184,10 +183,32 @@ public class LexicalAnalyzer {
 		}
 	}
 
-	private Token scanWord(Character character) {
-		// TODO Auto-generated method stub
+	private Token scanWord(Character initial) {
+		StringBuilder word = new StringBuilder();
+		Character nextCharacter = initial;
+		System.out.println("A primeira foi: " + initial);
+		if(!Character.isLetter(initial)){
+			// TODO joga um errinho aqui pq nao comecou com letra
+		}
+		
+		while(true){
+			if(!this.hasNext()){
+				// TODO para no fim de tudo e manda uma lexicalexception pq o ultimo valor n pode ser um numero
+			}
+			
+			if(!Character.isLetterOrDigit(nextCharacter) || nextCharacter != '_'){
+				if(Terminals.contains("reservedword", word.toString())){
+					this.insertCharacter(nextCharacter);
+					return buildToken(Terminals.IDENTIFIER.toString(), word.toString());	
+				}
+				// TODO return this.buildToken("IDENTIFIER", word.toString());
+				
+			}
+			word.append(nextCharacter);
+			nextCharacter = this.nextCharacter();
+			System.out.println("Proxima foi: " + nextCharacter);
+		}
 
-		return this.nextToken();
 	}
 
 	private Token scanOperator(Character character) {
