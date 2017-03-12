@@ -59,14 +59,13 @@ public class LexicalAnalyzer {
 	}
 
 	private Character nextCharacter() {
-
 		return getSource().remove(0);
 	}
 
 	private void insertCharacter(Character character){
-		System.out.println("Esta printando de novo");
+		//System.out.println("Esta printando de novo");
 		getSource().add(0, character);
-		this.printSource();
+		//this.printSource();
 	}
 
 	public Token nextToken(){
@@ -121,14 +120,43 @@ public class LexicalAnalyzer {
 
 	private Token buildToken(String type, String value) {
 		// TODO Auto-generated method stub
-		System.out.println("Value: " + value + " Type:" + type);
-		return this.nextToken();
+		System.out.println("Value: " + value + " Type: " + Terminals.getTerminal(type).toString());
+		return new Token(Terminals.getTerminal(type), value, this.row, this.column - value.length());
+	}
+	
+	private Token scanWord(Character initial) {
+		StringBuilder word = new StringBuilder();
+		Character nextCharacter = initial;
+		System.out.println("A primeira foi: " + initial);
+		if(!Character.isLetter(initial)){
+			// TODO joga um errinho aqui pq nao comecou com letra
+		}
+		
+		while(true){
+			if(!this.hasNext()){
+				// TODO para no fim de tudo e manda uma lexicalexception pq o ultimo valor n pode ser um numero
+			}
+			
+			if(!Character.isLetterOrDigit(nextCharacter) && nextCharacter != '_'){
+				if(Terminals.contains("reservedword", word.toString())){
+					this.insertCharacter(nextCharacter);
+					return buildToken("reservedword", word.toString());	
+				}
+				// TODO return this.buildToken("IDENTIFIER", word.toString());
+				this.insertCharacter(nextCharacter);
+				return buildToken("identifier", word.toString());	
+				
+			}
+			word.append(nextCharacter);
+			nextCharacter = this.nextCharacter();
+			System.out.println("Proxima foi: " + nextCharacter);
+		}
+
 	}
 
 	private Token scanNumber(Character initial) {
 
 		int dotFlag = 0;
-		Terminals type = Terminals.INTEGER;
 		StringBuilder word = new StringBuilder();
 		Character nextCharacter = initial;
 		
@@ -140,11 +168,10 @@ public class LexicalAnalyzer {
 
 			if(!Character.isDigit(nextCharacter) && nextCharacter != '.'){
 				this.insertCharacter(nextCharacter);
-				return buildToken(type.toString(), word.toString());
+				return buildToken("data_type", word.toString());
 			}
 
 			if(nextCharacter == '.' && dotFlag < 1){
-				type = Terminals.FLOAT;
 				dotFlag++;
 			} else if (dotFlag > 1){
 				System.out.println("DEU ERRO"); // TODO lexical exception
@@ -164,7 +191,7 @@ public class LexicalAnalyzer {
 		if((int) this.nextCharacter() != 39){
 			// TODO throw um erro aqui caso tenha mais de um char entre os apostrofos
 		}
-		return buildToken(Terminals.CHARACTER.toString(), word.toString());
+		return buildToken("data_type", word.toString());
 	}
 	
 	private Token scanCharacterChain() { 
@@ -175,40 +202,12 @@ public class LexicalAnalyzer {
 				// TODO para no fim de tudo e manda uma lexicalexception pq o ultimo valor n pode ser um numero
 			}
 			if((int) nextCharacter == 34){
-				return buildToken(Terminals.STRING.toString(), word.toString());
+				return buildToken("data_type", word.toString());
 			}
 			
 			word.append(nextCharacter);
 			nextCharacter = this.nextCharacter();
 		}
-	}
-
-	private Token scanWord(Character initial) {
-		StringBuilder word = new StringBuilder();
-		Character nextCharacter = initial;
-		System.out.println("A primeira foi: " + initial);
-		if(!Character.isLetter(initial)){
-			// TODO joga um errinho aqui pq nao comecou com letra
-		}
-		
-		while(true){
-			if(!this.hasNext()){
-				// TODO para no fim de tudo e manda uma lexicalexception pq o ultimo valor n pode ser um numero
-			}
-			
-			if(!Character.isLetterOrDigit(nextCharacter) || nextCharacter != '_'){
-				if(Terminals.contains("reservedword", word.toString())){
-					this.insertCharacter(nextCharacter);
-					return buildToken(Terminals.IDENTIFIER.toString(), word.toString());	
-				}
-				// TODO return this.buildToken("IDENTIFIER", word.toString());
-				
-			}
-			word.append(nextCharacter);
-			nextCharacter = this.nextCharacter();
-			System.out.println("Proxima foi: " + nextCharacter);
-		}
-
 	}
 
 	private Token scanOperator(Character character) {

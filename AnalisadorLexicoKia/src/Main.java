@@ -9,7 +9,9 @@ public class Main {
 		
 		la.printSource();
 		
-		la.nextToken();
+		while(la.hasNext()){
+			la.nextToken();
+		}
 		
 	}
 

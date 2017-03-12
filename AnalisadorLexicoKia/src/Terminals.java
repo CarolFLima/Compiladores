@@ -96,7 +96,14 @@ public enum Terminals {
 		}
 		return false;
 	}
-
+	
+	public static Terminals getTerminal(String type){
+		for (Terminals terminal : Terminals.values()) {
+			if(terminal.getType().equals(type))
+				return terminal;
+		}
+		throw new LexicalException("Terminal not found!");
+	}
 	
 	
 }
