@@ -137,9 +137,6 @@ public class LexicalAnalyzer {
 			if(this.isLetter(character) || character == '_')
 				return this.scanWord(character);
 			
-			if(character == ';')
-				return this.buildToken("delimiter", character.toString());
-			
 			throw new LexicalException("No more tokens.");	
 		}
 		return null;

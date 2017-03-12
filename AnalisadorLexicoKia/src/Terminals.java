@@ -59,6 +59,7 @@ public enum Terminals {
 	FCO ("delimiter", "]") ,
 	AA ("delimiter", "\"") ,
 	FA ("delimiter", "\"") ,
+	VG ("delimiter", ",") ,
 	PV ("delimiter", ";") ;
 
 	private String type;
