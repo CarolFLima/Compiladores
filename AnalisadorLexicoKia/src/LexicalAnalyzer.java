@@ -52,7 +52,17 @@ public class LexicalAnalyzer {
 
 	private void setSource(List<Character> source) {
 		this.source = source;
-	}	
+	}
+	
+	private boolean isLetter(Character character){
+		if((int) character <= 90 && (int) character >= 65 ){
+			return true;
+		} 
+		if((int) character <= 122 && (int) character >= 97 ){
+			return true;
+		}
+		return false;
+	}
 
 	public boolean hasNext(){
 		return !this.getSource().isEmpty();
@@ -106,7 +116,7 @@ public class LexicalAnalyzer {
 			if(Terminals.contains("delimiter", character.toString()))
 				return this.buildToken("delimiter", character.toString());
 
-			if(Character.isLetter(character) || character == '_')
+			if(this.isLetter(character) || character == '_')
 				return this.scanWord(character);
 
 			throw new LexicalException("No more tokens.");	
@@ -124,7 +134,7 @@ public class LexicalAnalyzer {
 	private Token scanWord(Character initial) {
 		StringBuilder word = new StringBuilder();
 		Character nextCharacter = initial;
-		if(!Character.isLetter(initial)){
+		if(!this.isLetter(initial)){
 			// TODO joga um errinho aqui pq nao comecou com letra
 		}
 
@@ -138,7 +148,7 @@ public class LexicalAnalyzer {
 					return buildToken("identifier", word.toString());	
 			}
 
-			if(!Character.isLetterOrDigit(nextCharacter) && nextCharacter != '_'){
+			if(!(this.isLetter(nextCharacter) || Character.isDigit(nextCharacter))&& nextCharacter != '_'){
 				if(Terminals.contains("reservedword", word.toString())){
 					this.insertCharacter(nextCharacter);
 					return buildToken("reservedword", word.toString());	
