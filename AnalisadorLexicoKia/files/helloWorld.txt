@@ -1,9 +1,16 @@
-%* teste do comment
-por varias 
-linhas
-*%
-
-float _oi12356 = 20.4
-%% teste da linha
-string a = "ABC"
-oi = oi + 37..a
+void fibonacci(int num) {
+  		int primeiro = 0;
+  		int segundo = 1;
+  		int prox; 
+  		
+  	    print("#i", num); 
+  		
+  		while(segundo < num){ 
+  	    	
+  	    	cur = primeiro + segundo; 
+  	    	primeiro = segundo; 
+  	    	segundo = prox; 
+  	    	print("#i", prox); 
+  	    
+  	    }
+     }
