@@ -11,9 +11,10 @@ public class LexicalAnalyzer {
 	private int column;
 
 	private List<Character> source;	
-	
+
 	private boolean quoteFlag = false;
 
+	private int previousColumn;
 	public LexicalAnalyzer(String file){
 		this.row = this.column = 1;
 		this.source = this.buildSource(file);
@@ -55,7 +56,7 @@ public class LexicalAnalyzer {
 	private void setSource(List<Character> source) {
 		this.source = source;
 	}
-	
+
 	private boolean isLetter(Character character){
 		if((int) character <= 90 && (int) character >= 65 ){
 			return true;
@@ -71,10 +72,32 @@ public class LexicalAnalyzer {
 	}
 
 	private Character nextCharacter() {
-		return getSource().remove(0);
+		Character nextCharacter = getSource().remove(0);
+
+		if(nextCharacter == '\n'){
+			this.previousColumn = column;
+			this.column = 0;
+			this.row++;
+		} else if(nextCharacter == '\t'){
+			this.column = this.column + 4;
+		} else {
+			this.column++;
+		}
+		return nextCharacter;
 	}
 
 	private void insertCharacter(Character character){
+		Character nextCharacter = character;
+
+		if(nextCharacter == '\n'){
+			this.column = previousColumn;
+			this.row--;
+		} else if(nextCharacter == '\t'){
+			this.column = this.column - 4;
+		} else {
+			this.column--;
+		}
+
 		getSource().add(0, character);
 	}
 
@@ -105,18 +128,18 @@ public class LexicalAnalyzer {
 				quoteFlag = true;
 				return this.buildToken(Terminals.AA.getType(), Terminals.AA.getValue());
 			} 
-			
+
 			if(quoteFlag == true && (int) character != 34){
 				return this.scanCharacterChain(character);	
 			}
-			
+
 			if((int) character == 34 && quoteFlag == true){
 				quoteFlag = false;
-				System.out.println("Value: " + character.toString() + " Type: " + Terminals.FA.toString());
+				System.out.println("Value: " + character.toString() + " Type: " + Terminals.FA.toString() + ", Linha: " + this.row + " Coluna: " + this.column);
 				return new Token(Terminals.FA, character.toString(), this.row, this.column);
 			}
-			
-			
+
+
 			if((int) character == 39){
 				Character nextCharacter = this.nextCharacter();
 				return buildToken("data_type", nextCharacter.toString());
@@ -136,7 +159,7 @@ public class LexicalAnalyzer {
 
 			if(this.isLetter(character) || character == '_')
 				return this.scanWord(character);
-			
+
 			throw new LexicalException("No more tokens.");	
 		}
 		return null;
@@ -145,7 +168,7 @@ public class LexicalAnalyzer {
 
 	private Token buildToken(String type, String value) {
 		// TODO Auto-generated method stub
-		System.out.println("Value: " + value + " Type: " + Terminals.getTerminal(type, value).toString());
+		System.out.println("Value: " + value + " Type: " + Terminals.getTerminal(type, value).toString() + ", Linha: " + this.row + " Coluna: " + this.column);
 		return new Token(Terminals.getTerminal(type, value), value, this.row, this.column - value.length());
 	}
 
@@ -219,7 +242,7 @@ public class LexicalAnalyzer {
 	private Token scanCharacterChain(Character initial) { 
 		StringBuilder word = new StringBuilder();
 		Character nextCharacter = initial;
-		
+
 		while(true){
 			if(!this.hasNext()){
 				// TODO para no fim de tudo e manda uma lexicalexception pq o ultimo valor n pode ser um numero
