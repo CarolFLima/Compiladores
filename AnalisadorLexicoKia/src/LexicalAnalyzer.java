@@ -25,7 +25,6 @@ public class LexicalAnalyzer {
 
 			for (int c = input.read(); c > 0; c = input.read()){
 				if(c == '\n'){
-					System.out.println("Achou um barra n: " + c);
 					source.add('\n');
 				} else if (c == '\t'){
 					source.add('\t');
@@ -96,9 +95,11 @@ public class LexicalAnalyzer {
 			if(Character.isLetter(character) || character == '_')
 				return scanWord(character);
 
-			if((int) character == 34 || (int) character == 39 ){ // TODO na vdd isso aqui tem que ser dividido entre aspas e apostrofo, quando for apostrofo ja retornamos direto o buildToken de um char
-				return scanCharacter(character);				
-			}
+			if((int) character == 34 )
+				return scanCharacterChain();				
+			
+			if((int) character == 39)
+				return scanChar();
 
 			if(character.isDigit(character) || character == '.')
 				return scanNumber(character);
@@ -156,8 +157,18 @@ public class LexicalAnalyzer {
 		}
 	}
 
-	private Token scanCharacter(Character initial) { // TODO nem precisa mandar initial, pq ja comeca com aspas de qlqr forma
-													//	o metodo que se vire pra pegar o primeiro
+	private Token scanChar(){
+		StringBuilder word = new StringBuilder();
+		Character nextCharacter = this.nextCharacter();
+		word.append(nextCharacter);
+		
+		if((int) this.nextCharacter() != 39){
+			// TODO throw um erro aqui caso tenha mais de um char entre os apostrofos
+		}
+		return buildToken(Terminals.CHARACTER.toString(), word.toString());
+	}
+	
+	private Token scanCharacterChain() { 
 		StringBuilder word = new StringBuilder();
 		Character nextCharacter = this.nextCharacter();
 		while(true){

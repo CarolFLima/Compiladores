@@ -1,5 +1,6 @@
 
 Hello "OIE eu sou a carol" world
+Teste do char 'C'
 ABC 3127
-	DEi tab
+	DEi tab 2.55
 	Finalizei
