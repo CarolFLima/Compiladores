@@ -90,7 +90,7 @@ public class LexicalAnalyzer {
 
 			if((int) character == 34 )
 				return this.scanCharacterChain();				
-			
+
 			if((int) character == 39)
 				return this.scanChar();
 
@@ -105,7 +105,7 @@ public class LexicalAnalyzer {
 
 			if(Terminals.contains("delimiter", character.toString()))
 				return this.buildToken("delimiter", character.toString());
-			
+
 			if(Character.isLetter(character) || character == '_')
 				return this.scanWord(character);
 
@@ -120,14 +120,14 @@ public class LexicalAnalyzer {
 		System.out.println("Value: " + value + " Type: " + Terminals.getTerminal(type, value).toString());
 		return new Token(Terminals.getTerminal(type, value), value, this.row, this.column - value.length());
 	}
-	
+
 	private Token scanWord(Character initial) {
 		StringBuilder word = new StringBuilder();
 		Character nextCharacter = initial;
 		if(!Character.isLetter(initial)){
 			// TODO joga um errinho aqui pq nao comecou com letra
 		}
-		
+
 		while(true){
 			if(!this.hasNext()){
 				// TODO para no fim de tudo e manda uma lexicalexception pq o ultimo valor n pode ser um numero
@@ -137,7 +137,7 @@ public class LexicalAnalyzer {
 				else 
 					return buildToken("identifier", word.toString());	
 			}
-			
+
 			if(!Character.isLetterOrDigit(nextCharacter) && nextCharacter != '_'){
 				if(Terminals.contains("reservedword", word.toString())){
 					this.insertCharacter(nextCharacter);
@@ -146,7 +146,7 @@ public class LexicalAnalyzer {
 				// TODO return this.buildToken("IDENTIFIER", word.toString());
 				this.insertCharacter(nextCharacter);
 				return buildToken("identifier", word.toString());	
-				
+
 			}
 			word.append(nextCharacter);
 			nextCharacter = this.nextCharacter();
@@ -159,9 +159,9 @@ public class LexicalAnalyzer {
 		int dotFlag = 0;
 		StringBuilder word = new StringBuilder();
 		Character nextCharacter = initial;
-		
+
 		while(true){
-			
+
 			if(!this.hasNext()){
 				// TODO para no fim de tudo e manda uma lexicalexception pq o ultimo valor n pode ser um numero
 				word.append(nextCharacter);
@@ -178,7 +178,7 @@ public class LexicalAnalyzer {
 			} else if (dotFlag > 1){
 				System.out.println("DEU ERRO"); // TODO lexical exception
 			}
-			
+
 			word.append(nextCharacter);
 			nextCharacter = this.nextCharacter();
 
@@ -189,16 +189,16 @@ public class LexicalAnalyzer {
 		StringBuilder word = new StringBuilder();
 		Character nextCharacter = this.nextCharacter();
 		word.append(nextCharacter);
-		
+
 		if(!this.hasNext())
 			// TODO throw erro lexico
-			
-		if((int) this.nextCharacter() != 39){
-			// TODO throw um erro aqui caso tenha mais de um char entre os apostrofos
-		}
+
+			if((int) this.nextCharacter() != 39){
+				// TODO throw um erro aqui caso tenha mais de um char entre os apostrofos
+			}
 		return buildToken("data_type", word.toString());
 	}
-	
+
 	private Token scanCharacterChain() { 
 		StringBuilder word = new StringBuilder();
 		Character nextCharacter = this.nextCharacter();
@@ -209,7 +209,7 @@ public class LexicalAnalyzer {
 			if((int) nextCharacter == 34){
 				return buildToken("data_type", word.toString());
 			}
-			
+
 			word.append(nextCharacter);
 			nextCharacter = this.nextCharacter();
 		}
@@ -222,10 +222,10 @@ public class LexicalAnalyzer {
 		if(!this.hasNext()){
 			//TODO throw error
 		}
-		
+
 		Character nextCharacter = this.nextCharacter();
 		word.append(nextCharacter);
-		
+
 		if(Terminals.contains("operator", word.toString()))
 			return buildToken("operator", word.toString());
 		else 
@@ -233,7 +233,26 @@ public class LexicalAnalyzer {
 	}
 
 	private Token scanComment(Character initial) {
-		// TODO Auto-generated method stub
+		Character nextCharacter = initial;
+
+		if(initial == '*'){
+			while(true){
+				nextCharacter = this.nextCharacter();
+				if(nextCharacter == '*'){
+					nextCharacter = this.nextCharacter();
+					if(nextCharacter == '%'){
+						return this.nextToken();
+					}
+				}
+			}
+
+		} else if(initial == '%'){
+			while(nextCharacter != '\n'){
+				nextCharacter = this.nextCharacter();
+			}
+			return this.nextToken();
+		}
+
 		return null;
 	}
 }
