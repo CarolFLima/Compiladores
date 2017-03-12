@@ -3,6 +3,7 @@ por varias
 linhas
 *%
 
-int oi = 20.4
+float _oi12356 = 20.4
 %% teste da linha
-oi = oi + 37.a
+string a = "ABC"
+oi = oi + 37..a

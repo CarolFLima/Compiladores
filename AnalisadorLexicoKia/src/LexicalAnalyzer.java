@@ -11,6 +11,8 @@ public class LexicalAnalyzer {
 	private int column;
 
 	private List<Character> source;	
+	
+	private boolean quoteFlag = false;
 
 	public LexicalAnalyzer(String file){
 		this.row = this.column = 1;
@@ -98,11 +100,27 @@ public class LexicalAnalyzer {
 				return this.scanOperator(character);
 			}
 
-			if((int) character == 34 )
-				return this.scanCharacterChain();				
-
-			if((int) character == 39)
-				return this.scanChar();
+			//TODO gambiarra, comentar isso dps
+			if((int) character == 34 && quoteFlag == false){
+				quoteFlag = true;
+				return this.buildToken(Terminals.AA.getType(), Terminals.AA.getValue());
+			} 
+			
+			if(quoteFlag == true && (int) character != 34){
+				return this.scanCharacterChain(character);	
+			}
+			
+			if((int) character == 34 && quoteFlag == true){
+				quoteFlag = false;
+				System.out.println("Value: " + character.toString() + " Type: " + Terminals.FA.toString());
+				return new Token(Terminals.FA, character.toString(), this.row, this.column);
+			}
+			
+			
+			if((int) character == 39){
+				Character nextCharacter = this.nextCharacter();
+				return buildToken("data_type", nextCharacter.toString());
+			}
 
 			if(character.isDigit(character) || character == '.')
 				return this.scanNumber(character);
@@ -198,28 +216,30 @@ public class LexicalAnalyzer {
 		}
 	}
 
-	private Token scanChar(){
+//	private Token scanChar(){
+//		StringBuilder word = new StringBuilder();
+//		Character nextCharacter = this.nextCharacter();
+//		word.append(nextCharacter);
+//
+//		if(!this.hasNext())
+//			// TODO throw erro lexico
+//
+//			if((int) this.nextCharacter() != 39){
+//				// TODO throw um erro aqui caso tenha mais de um char entre os apostrofos
+//			}
+//		return buildToken("data_type", word.toString());
+//	}
+
+	private Token scanCharacterChain(Character initial) { 
 		StringBuilder word = new StringBuilder();
-		Character nextCharacter = this.nextCharacter();
-		word.append(nextCharacter);
-
-		if(!this.hasNext())
-			// TODO throw erro lexico
-
-			if((int) this.nextCharacter() != 39){
-				// TODO throw um erro aqui caso tenha mais de um char entre os apostrofos
-			}
-		return buildToken("data_type", word.toString());
-	}
-
-	private Token scanCharacterChain() { 
-		StringBuilder word = new StringBuilder();
-		Character nextCharacter = this.nextCharacter();
+		Character nextCharacter = initial;
+		
 		while(true){
 			if(!this.hasNext()){
 				// TODO para no fim de tudo e manda uma lexicalexception pq o ultimo valor n pode ser um numero
 			}
 			if((int) nextCharacter == 34){
+				this.insertCharacter(nextCharacter);
 				return buildToken("data_type", word.toString());
 			}
 
