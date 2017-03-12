@@ -97,10 +97,18 @@ public enum Terminals {
 		return false;
 	}
 	
-	public static Terminals getTerminal(String type){
+	public static Terminals getTerminal(String type, String value){
+		//System.out.println("No terminals --- value: " + value + ", type: " + type);
+		if(type == "data_type"){
+			return Terminals.DATA_TYPE;
+		} else if(type == "identifier"){
+			return Terminals.IDENTIFIER;
+		}
 		for (Terminals terminal : Terminals.values()) {
-			if(terminal.getType().equals(type))
-				return terminal;
+			if(terminal.getType().equalsIgnoreCase(type)){
+				if(terminal.getValue().equalsIgnoreCase(value))
+					return terminal;					
+			}
 		}
 		throw new LexicalException("Terminal not found!");
 	}

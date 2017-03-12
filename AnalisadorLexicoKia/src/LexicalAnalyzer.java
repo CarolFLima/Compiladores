@@ -63,9 +63,7 @@ public class LexicalAnalyzer {
 	}
 
 	private void insertCharacter(Character character){
-		//System.out.println("Esta printando de novo");
 		getSource().add(0, character);
-		//this.printSource();
 	}
 
 	public Token nextToken(){
@@ -74,11 +72,9 @@ public class LexicalAnalyzer {
 			Character character = this.nextCharacter(); 
 
 			if(character == ' ' || character == '\t' ){
-				//System.out.println("Entrou no if do espaco");
 				return this.nextToken();
 			}
 			if(character == '\n'){
-				//System.out.println("Entrou no if do barra n");
 				//TODO definir \0 depois
 				return this.nextToken();
 			} 
@@ -120,14 +116,13 @@ public class LexicalAnalyzer {
 
 	private Token buildToken(String type, String value) {
 		// TODO Auto-generated method stub
-		System.out.println("Value: " + value + " Type: " + Terminals.getTerminal(type).toString());
-		return new Token(Terminals.getTerminal(type), value, this.row, this.column - value.length());
+		System.out.println("Value: " + value + " Type: " + Terminals.getTerminal(type, value).toString());
+		return new Token(Terminals.getTerminal(type, value), value, this.row, this.column - value.length());
 	}
 	
 	private Token scanWord(Character initial) {
 		StringBuilder word = new StringBuilder();
 		Character nextCharacter = initial;
-		System.out.println("A primeira foi: " + initial);
 		if(!Character.isLetter(initial)){
 			// TODO joga um errinho aqui pq nao comecou com letra
 		}
@@ -149,7 +144,6 @@ public class LexicalAnalyzer {
 			}
 			word.append(nextCharacter);
 			nextCharacter = this.nextCharacter();
-			System.out.println("Proxima foi: " + nextCharacter);
 		}
 
 	}
