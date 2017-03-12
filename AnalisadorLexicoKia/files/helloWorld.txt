@@ -1,3 +1,2 @@
-int oi 20.4
-"hello"
-'c'
+int oi = 20.4
+oi = oi + 37

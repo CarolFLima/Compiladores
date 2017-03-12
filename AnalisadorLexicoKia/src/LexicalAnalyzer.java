@@ -204,9 +204,22 @@ public class LexicalAnalyzer {
 		}
 	}
 
-	private Token scanOperator(Character character) {
-		// TODO Auto-generated method stub
-		return null;
+	private Token scanOperator(Character initial) {
+		StringBuilder word = new StringBuilder();
+		word.append(initial);
+
+		if(!this.hasNext()){
+			//TODO throw error
+		}
+		
+		Character nextCharacter = this.nextCharacter();
+		word.append(nextCharacter);
+		
+		if(Terminals.contains("operator", word.toString()))
+			return buildToken("operator", word.toString());
+		else 
+			return buildToken("operator", initial.toString());
+		
 	}
 
 	private Token scanComment(Character character) {
