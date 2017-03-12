@@ -164,7 +164,10 @@ public class LexicalAnalyzer {
 
 			if(!this.hasNext()){
 				// TODO para no fim de tudo e manda uma lexicalexception pq o ultimo valor n pode ser um numero
-				word.append(nextCharacter);
+				if(Character.isDigit(nextCharacter)){
+					word.append(nextCharacter);
+				} 
+				this.insertCharacter(nextCharacter);
 				return buildToken("data_type", word.toString());
 			}
 

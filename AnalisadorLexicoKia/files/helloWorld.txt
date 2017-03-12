@@ -5,4 +5,4 @@ linhas
 
 int oi = 20.4
 %% teste da linha
-oi = oi + 37
+oi = oi + 37.a
