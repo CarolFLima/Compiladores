@@ -12,8 +12,6 @@ public class LexicalAnalyzer {
 
 	private List<Character> source;	
 
-	private int sourcePointer = 0;
-
 	public LexicalAnalyzer(String file){
 		this.row = this.column = 1;
 		this.source = this.buildSource(file);
@@ -25,8 +23,16 @@ public class LexicalAnalyzer {
 		try {
 			InputStream input = new FileInputStream(file);
 
-			for (int c = input.read(); c > 0; c = input.read())
-				source.add((char) c);
+			for (int c = input.read(); c > 0; c = input.read()){
+				if(c == '\n'){
+					System.out.println("Achou um barra n: " + c);
+					source.add('\n');
+				} else if (c == '\t'){
+					source.add('\t');
+				} else {
+					source.add((char) c);
+				}
+			}
 
 			input.close();
 		} catch (IOException e) {
@@ -53,50 +59,31 @@ public class LexicalAnalyzer {
 		return !this.getSource().isEmpty();
 	}
 
-	//			public void nextToken(){
-	//				this.getSource().add(5, '\0');
-	//				
-	//				int i = 0;
-	//				while(true){
-	//					if(hasNext()){
-	//						
-	//						Character c = this.getSource().get(0);
-	//							
-	//						if((int) c == 39){
-	//							System.out.println("Eh aspas");
-	//						}
-	//						System.out.println("Index: " + i + ", " + c);
-	//						this.getSource().remove(0);
-	//						i++;
-	//						
-	//					} else {
-	//						return;
-	//					}
-	//				}
-	//			
-	//			}
-
 	private Character nextCharacter() {
 
 		return getSource().remove(0);
 	}
 
 	private void insertCharacter(Character character){
+		//System.out.println("Esta printando de novo");
 		getSource().add(0, character);
+		//this.printSource();
 	}
 
 	public Token nextToken(){
 
 		if(hasNext()){
 			Character character = this.nextCharacter(); 
-			System.out.println("passou aqui " );
-			if(character == '\t')
-				System.out.println("Teve barra t");
-			if(character == ' ' || character == '\t' || character == '\n'){
+
+			if(character == ' ' || character == '\t' ){
+				//System.out.println("Entrou no if do espaco");
+				return this.nextToken();
+			}
+			if(character == '\n'){
+				//System.out.println("Entrou no if do barra n");
 				//TODO definir \0 depois
 				return this.nextToken();
 			} 
-			
 
 			if(character == '%'){
 				Character nextCharacter = this.nextCharacter();
@@ -109,8 +96,9 @@ public class LexicalAnalyzer {
 			if(Character.isLetter(character) || character == '_')
 				return scanWord(character);
 
-			if((int) character == 34 || (int) character == 39 )
-				return scanCharacter(character);
+			if((int) character == 34 || (int) character == 39 ){ // TODO na vdd isso aqui tem que ser dividido entre aspas e apostrofo, quando for apostrofo ja retornamos direto o buildToken de um char
+				return scanCharacter(character);				
+			}
 
 			if(character.isDigit(character) || character == '.')
 				return scanNumber(character);
@@ -133,48 +121,61 @@ public class LexicalAnalyzer {
 
 	private Token buildToken(String type, String value) {
 		// TODO Auto-generated method stub
-		System.out.println(value);
-		return null;
+		System.out.println("Value: " + value + " Type:" + type);
+		return this.nextToken();
 	}
 
 	private Token scanNumber(Character initial) {
-		// TODO Auto-generated method stub
-		
+
 		int dotFlag = 0;
 		Terminals type = Terminals.INTEGER;
 		StringBuilder word = new StringBuilder();
 		Character nextCharacter = initial;
+		
 		while(true){
-			word.append(nextCharacter);
-
+			
 			if(!hasNext()){
 				// TODO para no fim de tudo e manda uma lexicalexception pq o ultimo valor n pode ser um numero
 			}
-			
+
 			if(!Character.isDigit(nextCharacter) && nextCharacter != '.'){
 				this.insertCharacter(nextCharacter);
 				return buildToken(type.toString(), word.toString());
 			}
-			
+
 			if(nextCharacter == '.' && dotFlag < 1){
 				type = Terminals.FLOAT;
 				dotFlag++;
 			} else if (dotFlag > 1){
 				System.out.println("DEU ERRO"); // TODO lexical exception
 			}
-			nextCharacter = nextCharacter();
+			
+			word.append(nextCharacter);
+			nextCharacter = this.nextCharacter();
 
 		}
 	}
 
-	private Token scanCharacter(Character character) {
-		// TODO Auto-generated method stub
-		return this.nextToken();
+	private Token scanCharacter(Character initial) { // TODO nem precisa mandar initial, pq ja comeca com aspas de qlqr forma
+													//	o metodo que se vire pra pegar o primeiro
+		StringBuilder word = new StringBuilder();
+		Character nextCharacter = this.nextCharacter();
+		while(true){
+			if(!hasNext()){
+				// TODO para no fim de tudo e manda uma lexicalexception pq o ultimo valor n pode ser um numero
+			}
+			if((int) nextCharacter == 34){
+				return buildToken(Terminals.STRING.toString(), word.toString());
+			}
+			
+			word.append(nextCharacter);
+			nextCharacter = this.nextCharacter();
+		}
 	}
 
 	private Token scanWord(Character character) {
 		// TODO Auto-generated method stub
-		
+
 		return this.nextToken();
 	}
 
