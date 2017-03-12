@@ -136,7 +136,10 @@ public class LexicalAnalyzer {
 
 			if(this.isLetter(character) || character == '_')
 				return this.scanWord(character);
-
+			
+			if(character == ';')
+				return this.buildToken("delimiter", character.toString());
+			
 			throw new LexicalException("No more tokens.");	
 		}
 		return null;
@@ -215,20 +218,6 @@ public class LexicalAnalyzer {
 
 		}
 	}
-
-//	private Token scanChar(){
-//		StringBuilder word = new StringBuilder();
-//		Character nextCharacter = this.nextCharacter();
-//		word.append(nextCharacter);
-//
-//		if(!this.hasNext())
-//			// TODO throw erro lexico
-//
-//			if((int) this.nextCharacter() != 39){
-//				// TODO throw um erro aqui caso tenha mais de um char entre os apostrofos
-//			}
-//		return buildToken("data_type", word.toString());
-//	}
 
 	private Token scanCharacterChain(Character initial) { 
 		StringBuilder word = new StringBuilder();

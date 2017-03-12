@@ -22,7 +22,7 @@ public enum Terminals {
 	FALSE ("reservedword", "false") ,
 	TRUE ("reservedword", "true") ,
 	DEFINE ("reservedword", "define") ,
-	ARRAY ("reservedword", "cons") ,
+	ARRAY ("reservedword", "array") ,
 
 	IDENTIFIER ("identifier", "") ,
 	DATA_TYPE ("data_type", "") ,
@@ -58,7 +58,8 @@ public enum Terminals {
 	ACO ("delimiter", "[") ,
 	FCO ("delimiter", "]") ,
 	AA ("delimiter", "\"") ,
-	FA ("delimiter", "\"") ;
+	FA ("delimiter", "\"") ,
+	PV ("delimiter", ";") ;
 
 	private String type;
 	private String value;
