@@ -140,6 +140,7 @@ public class LexicalAnalyzer {
 
 			if((int) character == 39){
 				Character nextCharacter = this.nextCharacter();
+				this.nextCharacter();
 				return buildToken("data_type", nextCharacter.toString());
 			}
 
@@ -279,10 +280,12 @@ public class LexicalAnalyzer {
 		Character nextCharacter = this.nextCharacter();
 		word.append(nextCharacter);
 
-		if(Terminals.contains("operator", word.toString()))
+		if(Terminals.contains("operator", word.toString())){
 			return buildToken("operator", word.toString());
-		else 
-			return buildToken("operator", initial.toString());	
+		} else {
+			this.insertCharacter(nextCharacter);
+			return buildToken("operator", initial.toString());
+		}
 	}
 
 	private Token scanComment(Character initial) {

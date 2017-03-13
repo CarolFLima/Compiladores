@@ -1,0 +1,16 @@
+void fibonacci(int num) {
+  		int primeiro = 0;
+  		int segundo = 1;
+  		int prox; 
+  		
+  	    print("#i", num); 
+  		
+  		while(segundo < num){ 
+  	    	
+  	    	cur = primeiro + segundo; 
+  	    	primeiro = segundo; 
+  	    	segundo = prox; 
+  	    	print("#i", prox); 
+  	    
+  	    }
+     }

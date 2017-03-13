@@ -1,0 +1,27 @@
+	void quick_sort(int list[]){
+    
+    	 int i = 0;
+    	 int j = 0;
+    	 int increment = 0;
+    	 int temp = 0;
+    	 int number_of_elements = 5;
+    	 
+    
+    	 for(increment = number_of_elements / 2; increment > 0; ) {
+    	    	for(i = increment; i < number_of_elements; i++) {
+    	    		temp = list[i];
+    	    		for(j = i; j >= increment; j -= increment) {
+    	    			if (temp < list[j - increment]) {
+    	    				list[j] = list[j - increment];
+    	    			} else {
+    	    				break;
+    	    			}
+    	    		}
+    	    		list[j] = temp;
+    	    		increment = increment / 2;
+    	    	}
+    	    }
+    	    
+    	 print("Numeros: #a", list);
+    	 
+    }
