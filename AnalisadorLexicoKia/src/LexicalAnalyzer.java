@@ -110,7 +110,6 @@ public class LexicalAnalyzer {
 				return this.nextToken();
 			}
 			if(character == '\n'){
-				//TODO definir \0 depois
 				return this.nextToken();
 			} 
 
@@ -123,7 +122,6 @@ public class LexicalAnalyzer {
 				return this.scanOperator(character);
 			}
 
-			//TODO gambiarra, comentar isso dps
 			if((int) character == 34 && quoteFlag == false){
 				quoteFlag = true;
 				return this.buildToken(Terminals.AA.getType(), Terminals.AA.getValue());
@@ -145,7 +143,7 @@ public class LexicalAnalyzer {
 				return buildToken("data_type", nextCharacter.toString());
 			}
 
-			if(character.isDigit(character) || character == '.')
+			if(Character.isDigit(character))
 				return this.scanNumber(character);
 
 			if(Terminals.contains("operator", character.toString()))
@@ -160,14 +158,13 @@ public class LexicalAnalyzer {
 			if(this.isLetter(character) || character == '_')
 				return this.scanWord(character);
 
-			throw new LexicalException("No more tokens.");	
+			System.out.println("Token não reconhecido. Erro na linha: " + this.row + ", na coluna: " + this.column );
 		}
 		return null;
 	}
 
 
 	private Token buildToken(String type, String value) {
-		// TODO Auto-generated method stub
 		System.out.println("Value: " + value + " Type: " + Terminals.getTerminal(type, value).toString() + ", Linha: " + this.row + " Coluna: " + this.column);
 		return new Token(Terminals.getTerminal(type, value), value, this.row, this.column - value.length());
 	}
@@ -175,13 +172,9 @@ public class LexicalAnalyzer {
 	private Token scanWord(Character initial) {
 		StringBuilder word = new StringBuilder();
 		Character nextCharacter = initial;
-		if(!this.isLetter(initial)){
-			// TODO joga um errinho aqui pq nao comecou com letra
-		}
-
+		
 		while(true){
 			if(!this.hasNext()){
-				// TODO para no fim de tudo e manda uma lexicalexception pq o ultimo valor n pode ser um numero
 				word.append(nextCharacter);
 				if(Terminals.contains("reservedword", word.toString()))
 					return buildToken("reservedword", word.toString());
@@ -194,7 +187,6 @@ public class LexicalAnalyzer {
 					this.insertCharacter(nextCharacter);
 					return buildToken("reservedword", word.toString());	
 				}
-				// TODO return this.buildToken("IDENTIFIER", word.toString());
 				this.insertCharacter(nextCharacter);
 				return buildToken("identifier", word.toString());	
 
@@ -209,12 +201,12 @@ public class LexicalAnalyzer {
 
 		int dotFlag = 0;
 		StringBuilder word = new StringBuilder();
+		StringBuilder wordBeforeDot = new StringBuilder();
 		Character nextCharacter = initial;
 
 		while(true){
 
 			if(!this.hasNext()){
-				// TODO para no fim de tudo e manda uma lexicalexception pq o ultimo valor n pode ser um numero
 				if(Character.isDigit(nextCharacter)){
 					word.append(nextCharacter);
 				} 
@@ -223,17 +215,29 @@ public class LexicalAnalyzer {
 			}
 
 			if(!Character.isDigit(nextCharacter) && nextCharacter != '.'){
+				
 				this.insertCharacter(nextCharacter);
-				return buildToken("data_type", word.toString());
+				if(word.substring(word.length() - 1).equals(".")){
+					return buildToken("data_type", wordBeforeDot.toString());	
+				} else {
+					return buildToken("data_type", word.toString());
+				}
 			}
 
 			if(nextCharacter == '.' && dotFlag < 1){
 				dotFlag++;
-			} else if (dotFlag > 1){
-				System.out.println("DEU ERRO"); // TODO lexical exception
+			} else if ( nextCharacter == '.' && dotFlag == 1){
+				System.out.println("Token não reconhecido. Erro na linha: " + this.row + ", na coluna: " + this.column); 
+				return buildToken("data_type", wordBeforeDot.toString());
 			}
-
-			word.append(nextCharacter);
+			
+			if(dotFlag == 0){
+				wordBeforeDot.append(nextCharacter);
+				word.append(nextCharacter);	
+			} else {
+				word.append(nextCharacter);
+			}
+			
 			nextCharacter = this.nextCharacter();
 
 		}
@@ -245,7 +249,14 @@ public class LexicalAnalyzer {
 
 		while(true){
 			if(!this.hasNext()){
-				// TODO para no fim de tudo e manda uma lexicalexception pq o ultimo valor n pode ser um numero
+				if((int) nextCharacter != 34){
+					word.append(nextCharacter);
+					System.out.println("Erro léxico na linha" + this.row + ", na coluna: " + this.column);
+					return buildToken("data_type", word.toString());
+				} else {
+					this.insertCharacter(nextCharacter);
+					return buildToken("data_type", word.toString());
+				}
 			}
 			if((int) nextCharacter == 34){
 				this.insertCharacter(nextCharacter);
@@ -262,7 +273,7 @@ public class LexicalAnalyzer {
 		word.append(initial);
 
 		if(!this.hasNext()){
-			//TODO throw error
+			return buildToken("operator", initial.toString());
 		}
 
 		Character nextCharacter = this.nextCharacter();
