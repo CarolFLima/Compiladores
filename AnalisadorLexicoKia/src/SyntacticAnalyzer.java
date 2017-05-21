@@ -21,7 +21,7 @@ public class SyntacticAnalyzer {
 			}
 			//throw new LexicalException("No more tokens.");	// MUDAR AQUI PRA ERRO SINTATICO
 		}
-		
+
 		System.out.println("Achei um " + currToken.getType().toString() );
 
 	}
@@ -50,9 +50,9 @@ public class SyntacticAnalyzer {
 
 		} else if(currToken.getType().equals(Terminals.IF)){
 			this.Cond();
-			// chamar Cond()
+			this.Cond();
 		} else if(currToken.getType().equals(Terminals.WHILE) || currToken.getType().equals(Terminals.FOR)){
-			// chamar Iter()
+			this.Iter();
 		} else if(currToken.getType().equals(Terminals.IDENTIFIER)){
 			// chamar Atrib()
 		} else {
@@ -61,29 +61,28 @@ public class SyntacticAnalyzer {
 	}
 
 	private void Decl(){
-		Tipo();
-		next();
-		LId();
-
+		this.Tipo();
+		this.next();
+		this.LId();
 	}
 
 	private void Tipo(){
-		System.out.println("Achou um tipo");
+		System.out.println("Achou um TIPO");
 	}
 
 	private void LId(){
 		if(currToken.getType().equals(Terminals.IDENTIFIER)){
-			next();
-			LInre();
+			this.next();
+			this.LInre();
 		}
 	}
 
 	private void LInre(){
 		if(currToken.getType().equals(Terminals.VG)){
-			next();
+			this.next();
 			if(currToken.getType().equals(Terminals.IDENTIFIER)){
-				next();
-				LInre();
+				this.next();
+				this.LInre();
 			} else {
 				// lanca um erro de id esperado
 			}
@@ -122,6 +121,45 @@ public class SyntacticAnalyzer {
 		}
 	}
 
+	private void Iter(){
+		if(currToken.getType().equals(Terminals.FOR)){
+			this.next();
+			if(currToken.getType().equals(Terminals.AP)){
+				this.next();
+				
+				this.Decl();
+				
+				if(currToken.getType().equals(Terminals.PV)){
+					this.next();
+					this.Expr();
+					this.next();
+					if(currToken.getType().equals(Terminals.PV)){
+						this.next();
+						this.Expr();
+						this.next();
+//						System.out.println("===================Achou um " + currToken.getType());
+						if(currToken.getType().equals(Terminals.FP)){
+							this.next();
+							if(currToken.getType().equals(Terminals.AC)){
+								this.LCmd();
+								this.next();
+							}
+							if(currToken.getType().equals(Terminals.FC)){
+								return;
+							}
+						}
+					}
+				}
+			}
+
+		} else if(currToken.getType().equals(Terminals.WHILE)){
+
+		}
+	}
+
+	private void Expr(){
+		return;
+	}
 	private void Ebool(){
 
 	}
