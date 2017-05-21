@@ -167,7 +167,7 @@ public class LexicalAnalyzer {
 
 
 	private Token buildToken(String type, String value) {
-		System.out.println("Value: " + value + " Type: " + Terminals.getTerminal(type, value).toString() + ", Linha: " + this.row + " Coluna: " + this.column);
+		//System.out.println("Value: " + value + " Type: " + Terminals.getTerminal(type, value).toString() + ", Linha: " + this.row + " Coluna: " + this.column);
 		return new Token(Terminals.getTerminal(type, value), value, this.row, this.column - value.length());
 	}
 

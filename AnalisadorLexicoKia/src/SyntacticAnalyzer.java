@@ -40,6 +40,7 @@ public class SyntacticAnalyzer {
 		if(!currToken.getType().equals(Terminals.FC))
 			this.next();
 		if(currToken.getType().equals(Terminals.PV)){
+			this.next();
 			this.Cmd();
 			this.LCnre();
 		}
@@ -59,7 +60,8 @@ public class SyntacticAnalyzer {
 		} else if(currToken.getType().equals(Terminals.IDENTIFIER)){
 			this.Atrib();
 		} else {
-			// throw Erro(currToken, "nao esperado")
+			//throw Erro(currToken, "nao esperado")
+			System.out.println("NAO ACHOU NENHUM COMANDO " + currToken.getType());
 		}
 	}
 
@@ -178,7 +180,14 @@ public class SyntacticAnalyzer {
 	}
 
 	private void Atrib(){
-		return;
+		System.out.println("COMECOU UM ATRIB");
+		this.next();
+		System.out.println("+++++++++++ Aqui " + currToken.getType());
+		if(currToken.getType().equals(Terminals.ASSIGN)){
+			this.next();
+			this.Expr();
+			System.out.println("Encerrou o ATRIB");
+		}
 	}
 	
 	private void Expr(){
