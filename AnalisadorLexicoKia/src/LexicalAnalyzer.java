@@ -154,8 +154,9 @@ public class LexicalAnalyzer {
 			if(character == '&' || character == '|')
 				return this.scanOperator(character);
 
-			if(Terminals.contains("delimiter", character.toString()))
+			if(Terminals.contains("delimiter", character.toString())){
 				return this.buildToken("delimiter", character.toString());
+			}
 
 			if(this.isLetter(character) || character == '_')
 				return this.scanWord(character);
@@ -167,7 +168,6 @@ public class LexicalAnalyzer {
 
 
 	private Token buildToken(String type, String value) {
-		// TODO Auto-generated method stub
 		System.out.println("Value: " + value + " Type: " + Terminals.getTerminal(type, value).toString() + ", Linha: " + this.row + " Coluna: " + this.column);
 		return new Token(Terminals.getTerminal(type, value), value, this.row, this.column - value.length());
 	}
