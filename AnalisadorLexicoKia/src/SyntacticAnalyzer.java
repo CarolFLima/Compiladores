@@ -29,12 +29,16 @@ public class SyntacticAnalyzer {
 	private void LCmd(){
 		System.out.println("=======================");
 		System.out.println("Comecou aqui o LCMD");
+		System.out.println("Achou no LCMD " + currToken.getType());
 		this.Cmd();
 		this.LCnre();
 	}
 
 	private void LCnre() {
-		next();
+		
+		//TODO entra aqui so se nao for chaves
+		if(!currToken.getType().equals(Terminals.FC))
+			this.next();
 		if(currToken.getType().equals(Terminals.PV)){
 			this.Cmd();
 			this.LCnre();
@@ -50,11 +54,10 @@ public class SyntacticAnalyzer {
 
 		} else if(currToken.getType().equals(Terminals.IF)){
 			this.Cond();
-			this.Cond();
 		} else if(currToken.getType().equals(Terminals.WHILE) || currToken.getType().equals(Terminals.FOR)){
 			this.Iter();
 		} else if(currToken.getType().equals(Terminals.IDENTIFIER)){
-			// chamar Atrib()
+			this.Atrib();
 		} else {
 			// throw Erro(currToken, "nao esperado")
 		}
@@ -153,10 +156,31 @@ public class SyntacticAnalyzer {
 			}
 
 		} else if(currToken.getType().equals(Terminals.WHILE)){
-
+			this.next();
+			if(currToken.getType().equals(Terminals.AP)){
+				this.next();
+				this.Expr();
+				this.next();
+				if(currToken.getType().equals(Terminals.FP)){
+					this.next();
+					if(currToken.getType().equals(Terminals.AC)){
+						this.next();
+						this.LCmd();
+						//System.out.println("++++++++++ Achou aqui " + currToken.getType());
+						if(currToken.getType().equals(Terminals.FC)){
+							System.out.println("Acabou o WHILE");
+							return;
+						}
+					}
+				}
+			}
 		}
 	}
 
+	private void Atrib(){
+		return;
+	}
+	
 	private void Expr(){
 		return;
 	}
