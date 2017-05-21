@@ -3,7 +3,6 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		
 		/*
 		// Test
 		String file = "files/helloWorld.txt";
@@ -20,7 +19,7 @@ public class Main {
 		
 		SyntacticAnalyzer sa = new SyntacticAnalyzer();
 		sa.init();
-		
+
 	}
 
 }
