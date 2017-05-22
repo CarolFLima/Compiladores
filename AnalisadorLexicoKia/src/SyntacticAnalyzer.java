@@ -22,20 +22,16 @@ public class SyntacticAnalyzer {
 			//throw new LexicalException("No more tokens.");	// MUDAR AQUI PRA ERRO SINTATICO
 		}
 
-		System.out.println("Achei um " + currToken.getType().toString() + "  " + currToken.getValue() );
+		//System.out.println("Achei um " + currToken.getType().toString() + "  " + currToken.getValue() );
 
 	}
 
 	private void LCmd(){
-		System.out.println("=======================");
-		System.out.println("Achou no LCMD " + currToken.getType());
 		this.Cmd();
 		this.LCnre();
 	}
 
 	private void LCnre() {
-		System.out.println("Entrou no LCNRE " + currToken.getType());
-		
 		//TODO entra aqui so se nao for chaves
 		//if(!currToken.getType().equals(Terminals.FC))
 			//this.next();
@@ -120,7 +116,6 @@ public class SyntacticAnalyzer {
 		this.next();
 		if(currToken.getType().equals(Terminals.FC)){
 			this.next();
-			System.out.println("ENTROU AQUIEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
 			if(currToken.getType().equals(Terminals.ELSE)){
 				this.next();
 				if(currToken.getType().equals(Terminals.AC))
@@ -148,7 +143,6 @@ public class SyntacticAnalyzer {
 						this.next();
 						this.Expr();
 						this.next();
-//						System.out.println("===================Achou um " + currToken.getType());
 						if(currToken.getType().equals(Terminals.FP)){
 							this.next();
 							if(currToken.getType().equals(Terminals.AC)){
@@ -185,24 +179,22 @@ public class SyntacticAnalyzer {
 	}
 
 	private void Atrib(){
-		System.out.println("COMECOU UM ATRIB");
 		this.next();
-		System.out.println("+++++++++++ Aqui " + currToken.getType());
 		if(currToken.getType().equals(Terminals.ASSIGN)){
 			this.next();
-			this.Expr();
-			System.out.println("Encerrou o ATRIB");
+			this.EArit();
 		}
 	}
 	
 	private void Expr(){
-		//this.Ebool();
-		this.next(); //sempre devolver um next
+		System.out.println("Chamou a expressão " + currToken.getValue());
+		this.Ebool();
+		this.next(); 
 	}
 	
 	private void Ebool(){
-		//this.Tbool();
-		//this.Ebnre();
+		this.Tbool();
+		this.Ebnre();
 	}
 	
 	private void Ebnre(){
@@ -246,7 +238,72 @@ public class SyntacticAnalyzer {
 	}
 	
 	private void ERel(){
-		
+		this.EArit();
+		if(currToken.getType().equals(Terminals.EQUAL) || currToken.getType().equals(Terminals.EQUALG) || currToken.getType().equals(Terminals.EQUALL)|| 
+				currToken.getType().equals(Terminals.LESS) || currToken.getType().equals(Terminals.LESSE) ||
+				currToken.getType().equals(Terminals.GREATER)|| currToken.getType().equals(Terminals.DIFF)){
+			this.next();
+			this.EArit();
+		}
 	}
 	
+	private void EArit(){
+		System.out.println("EArit = TArit EArne " + currToken.getValue());
+		this.TArit();
+		this.EArne();
+	}
+	
+	private void EArne(){
+		//this.next();
+		if(currToken.getType().equals(Terminals.PLUS) || currToken.getType().equals(Terminals.MINUS)){
+			System.out.println("EArne = opa (" + currToken.getValue() + ") TArit Earne");
+			this.TArit();
+			this.EArne();
+			
+		} else {
+			System.out.println("EArne = Epsilon");
+		}
+	}
+	
+	private void TArit(){
+		System.out.println("TArit = FArit " + currToken.getValue());
+		//this.next();
+		this.FArit();
+		this.TArne();
+		//System.out.println("TArit = FArit TArne " + currToken.getValue());
+	}
+
+	private void TArne(){
+		
+		this.next();
+		if(currToken.getType().equals(Terminals.TIMES) || currToken.getType().equals(Terminals.DIV) ||
+				currToken.getType().equals(Terminals.MOD)){
+			System.out.println("EArne = opm (" + currToken.getValue() + ") TArit Earne");
+			this.next();
+			this.FArit();
+			this.TArne();
+			
+		} else {
+			System.out.println("TArne = Epsilon");
+		}
+	}
+	
+	private void FArit(){
+		if(currToken.getType().equals(Terminals.MINUS)){
+			this.next();
+			this.FArit(); //next
+		} else if(currToken.getType().equals(Terminals.DATA_TYPE) || currToken.getType().equals(Terminals.IDENTIFIER)){
+			System.out.println("FArit = id (" + currToken.getValue() + ")");
+			//this.next();
+			return;
+		} else if(currToken.getType().equals(Terminals.AP)){
+			this.next();
+			this.EArit();
+			if(currToken.getType().equals(Terminals.FP)){
+				
+			}
+		} else {
+			this.next();
+		}
+	}
 }
