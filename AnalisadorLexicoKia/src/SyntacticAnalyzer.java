@@ -22,28 +22,33 @@ public class SyntacticAnalyzer {
 			//throw new LexicalException("No more tokens.");	// MUDAR AQUI PRA ERRO SINTATICO
 		}
 
-		System.out.println("Achei um " + currToken.getType().toString() );
+		System.out.println("Achei um " + currToken.getType().toString() + "  " + currToken.getValue() );
 
 	}
 
 	private void LCmd(){
 		System.out.println("=======================");
-		System.out.println("Comecou aqui o LCMD");
 		System.out.println("Achou no LCMD " + currToken.getType());
 		this.Cmd();
 		this.LCnre();
 	}
 
 	private void LCnre() {
+		System.out.println("Entrou no LCNRE " + currToken.getType());
 		
 		//TODO entra aqui so se nao for chaves
-		if(!currToken.getType().equals(Terminals.FC))
-			this.next();
+		//if(!currToken.getType().equals(Terminals.FC))
+			//this.next();
 		if(currToken.getType().equals(Terminals.PV)){
 			this.next();
+			while(currToken.getType().equals(Terminals.FC)) //tirar isso dps
+				this.next();
 			this.Cmd();
 			this.LCnre();
-		}
+		} /*else if(currToken.getType().equals(Terminals.FC)){
+			this.next();
+			this.LCmd();
+		}*/
 	}
 
 	private void Cmd() {
@@ -115,6 +120,7 @@ public class SyntacticAnalyzer {
 		this.next();
 		if(currToken.getType().equals(Terminals.FC)){
 			this.next();
+			System.out.println("ENTROU AQUIEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
 			if(currToken.getType().equals(Terminals.ELSE)){
 				this.next();
 				if(currToken.getType().equals(Terminals.AC))
@@ -162,13 +168,12 @@ public class SyntacticAnalyzer {
 			if(currToken.getType().equals(Terminals.AP)){
 				this.next();
 				this.Expr();
-				this.next();
 				if(currToken.getType().equals(Terminals.FP)){
 					this.next();
+					System.out.println("++++++++++ Achou aqui " + currToken.getType());
 					if(currToken.getType().equals(Terminals.AC)){
 						this.next();
 						this.LCmd();
-						//System.out.println("++++++++++ Achou aqui " + currToken.getType());
 						if(currToken.getType().equals(Terminals.FC)){
 							System.out.println("Acabou o WHILE");
 							return;
@@ -191,9 +196,57 @@ public class SyntacticAnalyzer {
 	}
 	
 	private void Expr(){
-		return;
+		//this.Ebool();
+		this.next(); //sempre devolver um next
 	}
+	
 	private void Ebool(){
-
+		//this.Tbool();
+		//this.Ebnre();
 	}
+	
+	private void Ebnre(){
+		if(currToken.getType().equals(Terminals.OR)){
+			this.Ebool();
+			this.Ebnre();
+		} else {
+			System.out.println("Epsilon");
+		}
+	}
+	
+	private void Tbool(){
+		this.Fbool();
+		this.Tbnre();
+	}
+	
+	private void Tbnre(){
+		if(currToken.getType().equals(Terminals.AND)){
+			this.Fbool();
+			this.Tbnre();
+		} else {
+			System.out.println("Epsilon");
+		}
+	}
+	
+	
+	private void Fbool(){
+		if(currToken.getType().equals(Terminals.NOT)){
+			
+		} else if(currToken.getType().equals(Terminals.TRUE)){
+			
+		} else if(currToken.getType().equals(Terminals.FALSE)){
+			
+		} else if(currToken.getType().equals(Terminals.AP)){
+			this.Ebool();
+			if(currToken.getType().equals(Terminals.FP)){
+				
+			}
+		} 
+		this.ERel();
+	}
+	
+	private void ERel(){
+		
+	}
+	
 }
